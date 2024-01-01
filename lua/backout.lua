@@ -3,7 +3,7 @@ local utils = require("backout.utils")
 local config = require("backout.config")
 
 M.back = function()
-    local pos = utils.findChar(false)
+    local pos = utils.findChar(false) - 1
     if pos >= 0 then
         utils.moveCursor(pos)
     end

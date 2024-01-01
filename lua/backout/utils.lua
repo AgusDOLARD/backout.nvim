@@ -27,8 +27,9 @@ end
 ---@param forward boolean
 ---@return number
 M.findChar = function(forward)
+    local col = vim.fn.col
     local step = forward and 1 or -1
-    local position = vim.api.nvim_win_get_cursor(0)[2] + step
+    local position = forward and col(".") or col(".") + step
 
     local found = false
     repeat
@@ -38,13 +39,14 @@ M.findChar = function(forward)
             position = position + step
         end
     until found or char == ""
+    print(position)
 
     return position
 end
 
 ---@param column number
 M.moveCursor = function(column)
-    local row = vim.api.nvim_win_get_cursor(0)[1]
+    local row = vim.fn.line(".")
     vim.api.nvim_win_set_cursor(0, { row, column })
 end
 
