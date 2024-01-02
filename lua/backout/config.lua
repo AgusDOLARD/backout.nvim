@@ -2,6 +2,7 @@ local M = {}
 
 local defaults = {
     chars = "(){}[]`'\"<>",
+    debug = false,
 }
 
 M.opts = {}
