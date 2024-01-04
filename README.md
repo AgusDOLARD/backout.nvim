@@ -4,6 +4,10 @@
 
 `backout.nvim` is a minimal neovim plugin designed to move inline while remaining in insert mode. This plugin is inspired by functionality from [auto-pairs](https://github.com/jiangmiao/auto-pairs) that I couldn't find in other auto-pair plugins.
 
+### Example
+
+![Example](https://vhs.charm.sh/vhs-3GlHnYyLicCwUqKLzWYwfW.gif)
+
 ## 🚀 Installation
 
 - [lazy.nvim](https://github.com/folke/lazy.nvim)
