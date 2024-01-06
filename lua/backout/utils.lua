@@ -7,6 +7,7 @@ local logger = require("backout.logger")
 ---@param col number
 ---@return string
 local function getChar(row, col)
+    if row < 0 or col < 0 then return "invalid" end
     local line = vim.fn.getline(row)
     return line:sub(col, col)
 end
