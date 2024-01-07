@@ -6,7 +6,7 @@
 
 ### Example
 
-![Example](https://vhs.charm.sh/vhs-3GlHnYyLicCwUqKLzWYwfW.gif)
+![Example](https://vhs.charm.sh/vhs-5zjoLQoKJKK1DQBld3RQRp.gif)
 
 ## 🚀 Installation
 
