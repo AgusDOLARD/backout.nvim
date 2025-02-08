@@ -59,8 +59,8 @@ end
 
 M.back = function()
     local cursor = vim.fn.getcurpos(0)
-    local row, col = findChar(false, cursor[2], cursor[3])
-    if row ~= -1 then moveCursor(row, col) end
+    local row, col = findChar(false, cursor[2], cursor[3] - 1)
+    if row ~= -1 then moveCursor(row, col - 1) end
 end
 
 M.out = function()
