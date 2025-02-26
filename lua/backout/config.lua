@@ -1,8 +1,10 @@
+-- :nmap <leader>rr :lua require("backout.config").reload()<CR>
+--
 local M = {}
 
 local defaults = {
     chars = "(){}[]`'\"<>",
-    debug = false,
+    logLevel = "error",
 }
 
 M.opts = {}
@@ -22,6 +24,7 @@ end
 M.setup = function(opts)
     M.opts = vim.tbl_deep_extend("force", {}, defaults, opts or {})
     M.opts.chars = parseChars(M.opts.chars)
+    require("backout.logger").new({ level = M.opts.logLevel }, true)
 end
 
 return M
