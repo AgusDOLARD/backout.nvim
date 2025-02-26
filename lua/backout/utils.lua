@@ -27,72 +27,90 @@ local findCharacterBackward = function(line, start)
     if found_pos_in_rev then return start - found_pos_in_rev + 1 end
 end
 
----@param row number
----@param col number
-local moveCursor = function(row, col)
-    log.trace("_moveCursor")
-    log.fmt_info("moving cursor: %d,%d", row, col)
+--- Move the cursor in command-line mode.
+--- @param pos number :new position of cursor
+local moveCommandMode = function(pos)
+    log.trace("_moveCommandMode")
+    -- This is either not working or idk how to use it ???
+    -- vim.fn.setcmdpos(pos)
+end
+
+--- Move the cursor in insert mode.
+--- @param row number :The row to move to
+--- @param col number :The column to move to
+local moveInsertMode = function(row, col)
+    log.trace("_moveInsertMode")
     vim.api.nvim_win_set_cursor(0, { row, col })
 end
 
---- Move the cursor in command-line mode.
---- @param direction string :direction to move "right" or "left"
---- @param steps? number :steps away from cursor
-local moveCommandMode = function(direction, steps)
-    log.trace("_getCursor")
-    steps = steps or 1
-    local key = string.format("<%s>", direction)
-    local repeated = string.rep(key, steps)
-    log.fmt_info("pressing %s %d times", direction, steps)
-    vim.api.nvim_input(repeated)
+--- Move cursor
+--- @param row number :The row to move to
+--- @param col number :The column to move to
+local moveCursor = function(row, col)
+    log.trace("_moveCursor")
+    log.fmt_info("moving to: %d,%d", row, col)
+    if row == -1 then
+        moveCommandMode(col)
+    else
+        moveInsertMode(row, col)
+    end
 end
 
 --- Get the cursor position
 ---@return number,number :The row and column of the cursor
 local getCursor = function()
+    local row, col = -1, -1
     log.trace("_getCursor")
-    local cursor = vim.fn.getcurpos(0) -- Get cursor position (buf, row, col, off)
-    return cursor[2], cursor[3]
+    local mode = vim.fn.mode()
+    log.fmt_info("mode: %s", mode)
+    if mode == "c" then
+        col = vim.fn.getcmdpos()
+    else
+        local cursor = vim.fn.getcurpos(0) -- Get cursor position (buf, row, col, off)
+        row, col = cursor[2], cursor[3]
+    end
+    log.fmt_info("cursor: %d,%d", row, col)
+    return row, col
+end
+
+--- Get the line string at the cursor position
+--- @return string :The line string
+local getLine = function()
+    log.trace("_getLine")
+    if vim.fn.mode() == "c" then return vim.fn.getcmdline() end
+    return vim.fn.getline(".")
 end
 
 M.out = function()
     log.trace("_out")
     local row, col = getCursor()
-    local line = vim.fn.getline(row)
-    log.fmt_debug("cursor: %d,%d", row, col)
-    log.debug("line:", line)
-
-    local mode = vim.fn.mode()
-    log.debug("mode:", mode)
-    if mode == "c" then return moveCommandMode("right") end
+    local line = getLine()
+    log.fmt_info("line: %s", line)
 
     local found = findCharacter(line, col)
     if found then
-        log.debug("found:", found)
+        log.info("found:", found)
         moveCursor(row, found)
     else
         log.fmt_warn("no character found @ row: %d", row)
     end
+    log.info("moved out")
 end
 
 M.back = function()
     log.trace("_back")
     local row, col = getCursor()
-    local line = vim.fn.getline(row)
-    log.fmt_debug("cursor: %d,%d", row, col)
-    log.debug("line:", line)
-
-    local mode = vim.fn.mode()
-    log.debug("mode:", mode)
-    if mode == "c" then return moveCommandMode("left") end
+    local line = getLine()
+    log.fmt_info("line: %s", line)
 
     local found = findCharacterBackward(line, col - 1)
     if found then
-        log.debug("found:", found)
+        log.info("found:", found)
         moveCursor(row, found - 1)
     else
         log.fmt_warn("no character found @ row: %d", row)
     end
+    log.info("moved back")
 end
 
 return M
