@@ -5,6 +5,7 @@ local M = {}
 local defaults = {
     chars = "(){}[]`'\"<>",
     logLevel = "error",
+    multiLine = true,
 }
 
 M.opts = {}

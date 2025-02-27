@@ -88,10 +88,11 @@ end
 
 --- Get the line string at the cursor position
 --- @return string :The line string
-local getLine = function()
+local getLine = function(row)
     log.trace("_getLine")
+    row = row or "."
     if vim.fn.mode() == "c" then return vim.fn.getcmdline() end
-    return vim.fn.getline(".")
+    return vim.fn.getline(row)
 end
 
 M.out = function()
@@ -106,6 +107,15 @@ M.out = function()
         moveCursor(row, found)
     else
         log.fmt_warn("no character found @ row: %d", row)
+        if config.opts.multiLine then
+            log.fmt_info("checking next line")
+            local nextRow = row + 1
+            local lastRow = vim.api.nvim_buf_line_count(0)
+            if nextRow <= lastRow then
+                moveCursor(nextRow, 0)
+                M.out()
+            end
+        end
     end
     log.info("moved out")
 end
@@ -122,6 +132,14 @@ M.back = function()
         moveCursor(row, found - 1)
     else
         log.fmt_warn("no character found @ row: %d", row)
+        if config.opts.multiLine then
+            log.fmt_info("checking previous line")
+            local prevRow = row - 1
+            if prevRow >= 1 then
+                moveCursor(prevRow, #getLine(prevRow))
+                M.back()
+            end
+        end
     end
     log.info("moved back")
 end
