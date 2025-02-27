@@ -27,6 +27,8 @@ local findCharacterBackward = function(line, start)
     if found_pos_in_rev then return start - found_pos_in_rev + 1 end
 end
 
+local inCommandMode = function() return vim.fn.mode() == "c" end
+
 --- Move the cursor in command-line mode.
 --- @param pos number :new position of cursor
 local moveCommandMode = function(pos)
@@ -62,7 +64,7 @@ end
 local moveCursor = function(row, col)
     log.trace("_moveCursor")
     log.fmt_info("moving to: %d,%d", row, col)
-    if row == -1 then
+    if inCommandMode() then
         moveCommandMode(col)
     else
         moveInsertMode(row, col)
@@ -74,9 +76,7 @@ end
 local getCursor = function()
     local row, col = -1, -1
     log.trace("_getCursor")
-    local mode = vim.fn.mode()
-    log.fmt_info("mode: %s", mode)
-    if mode == "c" then
+    if inCommandMode() then
         col = vim.fn.getcmdpos()
     else
         local cursor = vim.fn.getcurpos(0) -- Get cursor position (buf, row, col, off)
@@ -91,7 +91,7 @@ end
 local getLine = function(row)
     log.trace("_getLine")
     row = row or "."
-    if vim.fn.mode() == "c" then return vim.fn.getcmdline() end
+    if inCommandMode() then return vim.fn.getcmdline() end
     return vim.fn.getline(row)
 end
 
@@ -107,7 +107,7 @@ M.out = function()
         moveCursor(row, found)
     else
         log.fmt_warn("no character found @ row: %d", row)
-        if config.opts.multiLine then
+        if config.opts.multiLine and not inCommandMode() then
             log.fmt_info("checking next line")
             local nextRow = row + 1
             local lastRow = vim.api.nvim_buf_line_count(0)
@@ -132,7 +132,7 @@ M.back = function()
         moveCursor(row, found - 1)
     else
         log.fmt_warn("no character found @ row: %d", row)
-        if config.opts.multiLine then
+        if config.opts.multiLine and not inCommandMode() then
             log.fmt_info("checking previous line")
             local prevRow = row - 1
             if prevRow >= 1 then
