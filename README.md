@@ -18,8 +18,8 @@ return {
 	opts = {},
 	keys = {
         -- Define your keybinds
-		{ "<M-b>", "<cmd>lua require('backout').back()<cr>", mode = { "i" } },
-		{ "<M-n>", "<cmd>lua require('backout').out()<cr>", mode = { "i" } },
+		{ "<M-b>", "<cmd>lua require('backout').back()<cr>", mode = { "i", "c" } },
+		{ "<M-n>", "<cmd>lua require('backout').out()<cr>", mode = { "i", "c" } },
 	},
 }
 ```
@@ -33,6 +33,23 @@ A string containing characters or sequences to jump between
 ```lua
     chars = "(){}[]`'\"<>" -- default chars
 ```
+
+### multiLine
+
+Enable/Disable multi line movement
+
+```lua
+    multiLine = true -- enabled by default
+```
+
+### logLevel
+
+Log levels to show in console
+
+```lua
+    logLevel = "error" -- "trace"|"debug"|"info"|"error"|"fatal"
+```
+
 
 ## 🤝 Contributions
 
