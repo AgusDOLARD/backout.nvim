@@ -33,6 +33,19 @@ local moveCommandMode = function(pos)
     log.trace("_moveCommandMode")
     -- This is either not working or idk how to use it ???
     -- vim.fn.setcmdpos(pos)
+    --
+    -- Dirty fix till i find how to make it work...
+    local n = vim.fn.getcmdpos()
+    log.fmt_info("cursor: %d, pos: %d", n, pos)
+
+    local diff = (pos - n) + 1 -- +1 to move further away
+    log.fmt_info("diff: %d", diff)
+    local direction = diff > 0 and "<right>" or "<left>"
+    log.fmt_info("direction: %s", direction)
+
+    local keys = string.rep(direction, math.abs(diff))
+    local termcode = vim.api.nvim_replace_termcodes(keys, true, true, true)
+    vim.api.nvim_feedkeys(termcode, "n", true)
 end
 
 --- Move the cursor in insert mode.
